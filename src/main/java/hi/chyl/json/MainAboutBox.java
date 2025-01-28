@@ -10,13 +10,61 @@ import org.jdesktop.application.ResourceMap;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.net.URI;
+import java.awt.datatransfer.StringSelection;
 
 public class MainAboutBox extends JDialog {
+    private JButton closeButton;
+    private JLabel appHomepageLabel;
+    private JLabel appHomepageLabel1;
 
     public MainAboutBox(Frame parent) {
         super(parent);
         initComponents();
         getRootPane().setDefaultButton(closeButton);
+        
+        // 设置链接样式和点击事件
+        setupHyperlink(appHomepageLabel);
+        setupHyperlink(appHomepageLabel1);
+    }
+
+    private void setupHyperlink(final JLabel label) {
+        label.setForeground(Color.BLUE);
+        label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                try {
+                    String text = label.getText().replaceAll("<html><u>|</u></html>", "");
+                    if (text.contains("@")) {
+                        // 复制邮箱到剪贴板
+                        StringSelection selection = new StringSelection(text);
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+                        JOptionPane.showMessageDialog(MainAboutBox.this, 
+                            "邮箱地址已复制到剪贴板", "提示", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        // 网址则打开浏览器
+                        Desktop.getDesktop().browse(new URI(text));
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                label.setText("<html><u>" + label.getText().replaceAll("<html><u>|</u></html>", "") + "</u></html>");
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                label.setText(label.getText().replaceAll("<html><u>|</u></html>", ""));
+            }
+        });
     }
 
     @Action
@@ -40,11 +88,11 @@ public class MainAboutBox extends JDialog {
         JLabel vendorLabel = new JLabel();
         JLabel appVendorLabel = new JLabel();
         JLabel homepageLabel = new JLabel();
-        JLabel appHomepageLabel = new JLabel();
+        appHomepageLabel = new JLabel();
         JLabel appDescLabel = new JLabel();
         JLabel imageLabel = new JLabel();
         JLabel homepageLabel1 = new JLabel();
-        JLabel appHomepageLabel1 = new JLabel();
+        appHomepageLabel1 = new JLabel();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         ResourceMap resourceMap = Application.getInstance(MainApp.class).getContext().getResourceMap(MainAboutBox.class);
@@ -79,6 +127,7 @@ public class MainAboutBox extends JDialog {
         homepageLabel.setText(resourceMap.getString("homepageLabel.text")); // NOI18N
         homepageLabel.setName("homepageLabel"); // NOI18N
 
+        appHomepageLabel = new JLabel();
         appHomepageLabel.setText(resourceMap.getString("Application.homepage")); // NOI18N
         appHomepageLabel.setName("appHomepageLabel"); // NOI18N
 
@@ -92,6 +141,7 @@ public class MainAboutBox extends JDialog {
         homepageLabel1.setText(resourceMap.getString("homepageLabel1.text")); // NOI18N
         homepageLabel1.setName("homepageLabel1"); // NOI18N
 
+        appHomepageLabel1 = new JLabel();
         appHomepageLabel1.setText(resourceMap.getString("appHomepageLabel1.text")); // NOI18N
         appHomepageLabel1.setName("appHomepageLabel1"); // NOI18N
 
@@ -105,7 +155,7 @@ public class MainAboutBox extends JDialog {
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(18, 18, 18)
                                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                        .addComponent(appDescLabel, GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                                                        .addComponent(appDescLabel, GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                                         .addComponent(versionLabel)
@@ -115,12 +165,12 @@ public class MainAboutBox extends JDialog {
                                                                 .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                                         .addComponent(appVersionLabel)
                                                                         .addComponent(appVendorLabel)
-                                                                        .addComponent(appHomepageLabel, GroupLayout.PREFERRED_SIZE, 102, GroupLayout.PREFERRED_SIZE)))
+                                                                        .addComponent(appHomepageLabel, GroupLayout.PREFERRED_SIZE, 300, GroupLayout.PREFERRED_SIZE)))
                                                         .addComponent(appTitleLabel)
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(homepageLabel1)
                                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(appHomepageLabel1, GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE))))
+                                                                .addComponent(appHomepageLabel1, GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE))))
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(106, 106, 106)
                                                 .addComponent(closeButton)))
@@ -159,7 +209,6 @@ public class MainAboutBox extends JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton closeButton;
     // End of variables declaration//GEN-END:variables
 
 }

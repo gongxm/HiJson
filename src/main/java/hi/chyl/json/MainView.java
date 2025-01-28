@@ -524,10 +524,6 @@ public class MainView extends FrameView {
     }
 
     private RSyntaxTextArea newTextArea() {
-//        JTextArea textArea = new JTextArea();
-//        textArea.setAutoscrolls(true);
-////      textArea.getDocument().addUndoableEditListener(undoMg);
-//        textArea.addMouseListener(new TextAreaMouseListener());
         RSyntaxTextArea textArea = new RSyntaxTextArea();
         textArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVASCRIPT);
         textArea.setCodeFoldingEnabled(true);
@@ -545,6 +541,12 @@ public class MainView extends FrameView {
         textArea.revalidate();
         textArea.addMouseListener(new TextAreaMouseListener());
 
+        if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+            textArea.setFont(new Font("Menlo", Font.PLAIN, 12));
+            textArea.setBackground(new Color(255, 255, 255));
+            textArea.setSelectionColor(new Color(181, 214, 254));
+        }
+        
         return textArea;
     }
 
@@ -671,10 +673,19 @@ public class MainView extends FrameView {
 
 
     private void formatJson() {
-        //格式化字符串
         JsonElement jsonEle = null;
         JTextArea ta = getTextArea();
+        if (ta == null) {
+            showMessageDialog("错误", "无法获取文本区域");
+            return;
+        }
+        
         String text = ta.getText();
+        if (text == null || text.trim().isEmpty()) {
+            showMessageDialog("提示", "请输入JSON文本");
+            return;
+        }
+        
         try {
             text = JSON.toJSONString(JSON.parse(text), SerializerFeature.WriteMapNullValue, SerializerFeature.DisableCircularReferenceDetect);
             jsonEle = JsonParser.parseString(text);
@@ -970,8 +981,32 @@ public class MainView extends FrameView {
         if (index >= 0) {
             msg = msg.substring(index + ex.length());
         }
-        ToolTips tip = new ToolTips();
-        tip.setToolTip(title + "\n异常信息：" + msg);
+        
+        // 创建一个居中的JDialog
+        JDialog dialog = new JDialog(getFrame(), title, true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        
+        // 使用HTML格式实现自动换行，文本左对齐
+        String htmlText = "<html><body style='width: 250px;'>" 
+                         + "<div style='font-weight: bold;'>" + title + "</div>"
+                         + "<div>异常信息：" + msg + "</div>"
+                         + "</body></html>";
+        JLabel msgLabel = new JLabel(htmlText);
+        msgLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        
+        // 添加边距
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        panel.add(msgLabel, BorderLayout.CENTER);
+        
+        // 设置对话框大小和位置
+        dialog.add(panel);
+        dialog.pack();  // 自动调整大小
+        dialog.setMinimumSize(new Dimension(300, 100));
+        dialog.setLocationRelativeTo(getFrame());
+        
+        // 显示对话框
+        dialog.setVisible(true);
     }
 
     //[start]自动调列宽

@@ -1,0 +1,11 @@
+/Users/min/IdeaProjects/apache-maven-3.9.5/bin/mvn clean package jpackage:jpackage
+
+
+
+
+mvn clean package jpackage:jpackage
+
+
+
+´´½¨Í¼±ê£º
+iconutil -c icns MyIcon.iconset -o json.icns

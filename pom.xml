@@ -5,7 +5,7 @@
 
     <groupId>hi.chyl</groupId>
     <artifactId>json</artifactId>
-    <version>2.1.7</version>
+    <version>2.1.8</version>
     <name>HiJson</name>
     <packaging>jar</packaging>
     <properties>
@@ -77,6 +77,30 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.panteleyev</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <name>HiJson</name>
+                    <appVersion>${project.version}</appVersion>
+                    <vendor>HiJson</vendor>
+                    <destination>${project.build.directory}/dist</destination>
+                    <mainClass>hi.chyl.json.MainApp</mainClass>
+                    <mainJar>${project.build.finalName}-jar-with-dependencies.jar</mainJar>
+                    <input>${project.build.directory}</input>
+                    <type>DMG</type>
+                    <icon>src/main/resources/images/json.icns</icon>
+                    <javaOptions>
+                        <option>-Xms128m</option>
+                        <option>-Xmx512m</option>
+                    </javaOptions>
+                    <additionalOptions>
+                        <option>--add-launcher</option>
+                        <option>Applications=/Applications</option>
+                    </additionalOptions>
+                </configuration>
             </plugin>
         </plugins>
         <resources>
