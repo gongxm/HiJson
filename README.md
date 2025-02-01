@@ -103,3 +103,7 @@ json树生成，数组处理bug修改
 ### 0.1
 json格式化
 窗口布局设置
+
+### 原作者为: https://code.google.com/archive/p/json-view/
+### fork版本: https://github.com/iamlinhui/HiJson
+### 此版本仅在源码基础上增加打包成Mac App, 其他并无太多修改
